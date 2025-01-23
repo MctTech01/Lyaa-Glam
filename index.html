@@ -84,9 +84,12 @@
             font-size: 16px;
         }
 
-        .order-item span {
-            color: #28a745;
-            font-weight: bold;
+        .order-item .pending {
+            background-color: #fdd835;
+        }
+
+        .order-item .completed {
+            background-color: #81c784;
         }
 
         .order-item button {
@@ -197,7 +200,10 @@
         <div class="add-order-container" id="addOrderContainer">
             <h3>Create a New Order</h3>
 
-            <!-- Order Name Dropdown (can be populated later) -->
+            <!-- Customer Name Input -->
+            <input type="text" id="customerName" placeholder="Enter Customer Name">
+
+            <!-- Order Name Dropdown -->
             <select id="orderNameSelect">
                 <option value="">Select Order Name</option>
                 <option value="Robe Fleur">Robe Fleur</option>
@@ -287,6 +293,7 @@
 
         // Add order function (orders will have the username of the logged-in user)
         function addOrder() {
+            const customerName = document.getElementById('customerName').value.trim();
             const orderName = document.getElementById('orderNameSelect').value;
             const orderDescription = document.getElementById('orderDescription').value.trim();
             const orderQuantity = document.getElementById('orderQuantity').value;
@@ -296,13 +303,14 @@
             const paymentType = document.getElementById('paymentTypeSelect').value;
             const deliveryPoint = document.getElementById('deliveryPoint').value;
 
-            if (!orderName || !orderDescription || !orderQuantity || !orderPrice) {
+            if (!customerName || !orderName || !orderDescription || !orderQuantity || !orderPrice) {
                 alert("Please fill out all fields!");
                 return;
             }
 
             const order = {
                 orderNumber: orderCounter++,
+                customerName: customerName,
                 orderName: orderName,
                 orderDescription: orderDescription,
                 orderQuantity: orderQuantity,
@@ -322,6 +330,7 @@
         }
 
         function resetForm() {
+            document.getElementById('customerName').value = '';
             document.getElementById('orderNameSelect').value = '';
             document.getElementById('orderDescription').value = '';
             document.getElementById('orderQuantity').value = '';
@@ -341,12 +350,15 @@
             orders.forEach(order => {
                 const orderElement = document.createElement('div');
                 orderElement.classList.add('order-item');
+                const statusClass = order.completed ? 'completed' : 'pending';
+
+                orderElement.classList.add(statusClass);
                 orderElement.innerHTML = `
                     <h4>Order #${order.orderNumber}</h4>
+                    <p><strong>Customer Name:</strong> ${order.customerName}</p>
                     <p><strong>Order:</strong> ${order.orderName}</p>
                     <p><strong>Description:</strong> ${order.orderDescription}</p>
                     <p><strong>Quantity:</strong> ${order.orderQuantity}</p>
-                    <p><strong>Order Type:</strong> ${order.orderType}</p>
                     <p><strong>Price:</strong> ${order.orderPrice} Rs</p>
                     <p><strong>Payment Amount:</strong> ${order.paymentAmount}</p>
                     <p><strong>Payment Type:</strong> ${order.paymentType}</p>
@@ -401,12 +413,15 @@
             filteredOrders.forEach(order => {
                 const orderElement = document.createElement('div');
                 orderElement.classList.add('order-item');
+                const statusClass = order.completed ? 'completed' : 'pending';
+
+                orderElement.classList.add(statusClass);
                 orderElement.innerHTML = `
                     <h4>Order #${order.orderNumber}</h4>
+                    <p><strong>Customer Name:</strong> ${order.customerName}</p>
                     <p><strong>Order:</strong> ${order.orderName}</p>
                     <p><strong>Description:</strong> ${order.orderDescription}</p>
                     <p><strong>Quantity:</strong> ${order.orderQuantity}</p>
-                    <p><strong>Order Type:</strong> ${order.orderType}</p>
                     <p><strong>Price:</strong> ${order.orderPrice} Rs</p>
                     <p><strong>Payment Amount:</strong> ${order.paymentAmount}</p>
                     <p><strong>Payment Type:</strong> ${order.paymentType}</p>
@@ -418,7 +433,6 @@
                 pendingList.appendChild(orderElement);
             });
         }
-
     </script>
 </body>
 </html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyaa Glam - Order Management</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8d7db;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e91e63;
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .tabs button {
+            background-color: #e91e63;
+            color: #fff;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .tabs button:hover {
+            background-color: #ec407a;
+        }
+
+        .tabs .active {
+            background-color: #d81b60;
+        }
+
+        .order-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .order-item {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 45%;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .order-item:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .order-item h4 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #e91e63;
+        }
+
+        .order-item p {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .order-item span {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .order-item button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .order-item button:hover {
+            background-color: #0056b3;
+        }
+
+        .order-item button.done-btn {
+            background-color: #28a745;
+        }
+
+        .order-item button.done-btn:hover {
+            background-color: #218838;
+        }
+
+        .add-order-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .add-order-container h3 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #e91e63;
+        }
+
+        .add-order-container input, .add-order-container select, .add-order-container textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        .add-order-container button {
+            background-color: #e91e63;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-order-container button:hover {
+            background-color: #ec407a;
+        }
+
+        #searchWrapper {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        #searchInput {
+            padding: 10px;
+            border-radius: 5px;
+            width: 300px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Login Page -->
+    <div class="login-container" id="loginContainer">
+        <h2>Sign In to Lyaa Glam</h2>
+        <input type="text" id="usernameInput" placeholder="Enter your username">
+        <input type="password" id="passwordInput" placeholder="Enter your password">
+        <button onclick="signIn()">Sign In</button>
+    </div>
+
+    <!-- Order Manager Page -->
+    <div class="container" id="orderManagerContainer" style="display: none;">
+        <h1>Lyaa Glam - Order Management</h1>
+
+        <!-- Tabs for Pending and Completed orders -->
+        <div class="tabs">
+            <button id="pendingTab" class="active" onclick="showTab('pending')">Pending Orders</button>
+            <button id="completedTab" onclick="showTab('completed')">Completed Orders</button>
+        </div>
+
+        <!-- Search Bar -->
+        <div id="searchWrapper">
+            <input type="text" id="searchInput" placeholder="Search by Order Number or Order Name" onkeyup="searchOrders()">
+        </div>
+
+        <!-- Order Form -->
+        <div class="add-order-container" id="addOrderContainer">
+            <h3>Create a New Order</h3>
+
+            <!-- Order Name Dropdown (can be populated later) -->
+            <select id="orderNameSelect">
+                <option value="">Select Order Name</option>
+                <!-- List of selectable order names will be added later -->
+            </select>
+
+            <input type="text" id="orderDescription" placeholder="Describe the order">
+            <input type="number" id="orderQuantity" placeholder="Enter quantity" min="1">
+
+            <!-- Admin only: Fields for order details -->
+            <select id="orderTypeSelect" style="display: none;">
+                <option value="">Select Order Type</option>
+                <option value="Standard">Standard</option>
+                <option value="Express">Express</option>
+            </select>
+
+            <input type="number" id="paymentAmount" placeholder="Payment Amount" style="display: none;">
+            <select id="paymentTypeSelect" style="display: none;">
+                <option value="">Select Payment Type</option>
+                <option value="Cash">Cash</option>
+                <option value="Juice">Juice</option>
+            </select>
+
+            <input type="text" id="deliveryPoint" placeholder="Enter Delivery Point" style="display: none;">
+
+            <button onclick="addOrder()">Create Order</button>
+        </div>
+
+        <!-- Order List -->
+        <div id="pendingOrders" class="order-list"></div>
+        <div id="completedOrders" class="order-list" style="display: none;"></div>
+    </div>
+
+    <script>
+        let orders = [];
+        let orderCounter = 1;
+        let currentUser = '';
+        let isAdmin = false;
+
+        // Admin credentials
+        const adminCredentials = {
+            "Ashraf": "15",
+            "Sooraj": "77",
+            "Preety": "99",
+            "Akhilesh": "666"
+        };
+
+        // Sign-in function
+        function signIn() {
+            const usernameInput = document.getElementById('usernameInput').value.trim();
+            const passwordInput = document.getElementById('passwordInput').value.trim();
+
+            if (usernameInput === "") {
+                alert("Please enter your username!");
+                return;
+            }
+
+            if (adminCredentials[usernameInput] === passwordInput) {
+                currentUser = usernameInput;
+                isAdmin = true;
+            } else if (passwordInput === "") {
+                currentUser = usernameInput;
+                isAdmin = false;
+            } else {
+                alert("Invalid credentials. Please try again.");
+                return;
+            }
+
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('orderManagerContainer').style.display = 'block';
+
+            // If admin, show payment details and delivery point input
+            if (isAdmin) {
+                document.getElementById('orderTypeSelect').style.display = 'block';
+                document.getElementById('paymentAmount').style.display = 'block';
+                document.getElementById('paymentTypeSelect').style.display = 'block';
+                document.getElementById('deliveryPoint').style.display = 'block';
+            }
+        }
+
+        // Add order function (admins can specify payment details and delivery point)
+        function addOrder() {
+            const orderName = document.getElementById('orderNameSelect').value;
+            const orderDescription = document.getElementById('orderDescription').value.trim();
+            const orderQuantity = document.getElementById('orderQuantity').value;
+            const orderType = document.getElementById('orderTypeSelect').value;
+            const paymentAmount = document.getElementById('paymentAmount').value;
+            const paymentType = document.getElementById('paymentTypeSelect').value;
+            const deliveryPoint = document.getElementById('deliveryPoint').value;
+
+            if (!orderName || !orderDescription || !orderQuantity) {
+                alert("Please fill out all fields!");
+                return;
+            }
+
+            if (isAdmin && (!orderType || !paymentAmount || !paymentType || !deliveryPoint)) {
+                alert("Please select all required fields!");
+                return;
+            }
+
+            const order = {
+                orderNumber: orderCounter++,
+                orderName: orderName,
+                orderDescription: orderDescription,
+                orderQuantity: orderQuantity,
+                orderType: isAdmin ? orderType : 'Not Specified',
+                paymentAmount: isAdmin ? paymentAmount : 'Not Provided',
+                paymentType: isAdmin ? paymentType : 'Not Selected',
+                deliveryPoint: isAdmin ? deliveryPoint : 'Not Provided',
+                dateAdded: new Date().toLocaleDateString(),
+                completed: false,
+            };
+
+            orders.push(order);
+            renderOrders();
+            resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById('orderNameSelect').value = '';
+            document.getElementById('orderDescription').value = '';
+            document.getElementById('orderQuantity').value = '';
+
+            if (isAdmin) {
+                document.getElementById('orderTypeSelect').value = '';
+                document.getElementById('paymentAmount').value = '';
+                document.getElementById('paymentTypeSelect').value = '';
+                document.getElementById('deliveryPoint').value = '';
+            }
+        }
+
+        function renderOrders() {
+            const pendingList = document.getElementById('pendingOrders');
+            const completedList = document.getElementById('completedOrders');
+            pendingList.innerHTML = '';
+            completedList.innerHTML = '';
+
+            orders.forEach(order => {
+                const orderElement = document.createElement('div');
+                orderElement.classList.add('order-item');
+                orderElement.innerHTML = `
+                    <h4>Order #${order.orderNumber}</h4>
+                    <p><strong>Order:</strong> ${order.orderName}</p>
+                    <p><strong>Description:</strong> ${order.orderDescription}</p>
+                    <p><strong>Quantity:</strong> ${order.orderQuantity}</p>
+                    <p><strong>Order Type:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'orderType', this.innerText)">${order.orderType}</span></p>
+                    <p><strong>Payment Amount:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'paymentAmount', this.innerText)">${order.paymentAmount}</span></p>
+                    <p><strong>Payment Type:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'paymentType', this.innerText)">${order.paymentType}</span></p>
+                    <p><strong>Delivery Point:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'deliveryPoint', this.innerText)">${order.deliveryPoint}</span></p>
+                    <p><strong>Date Added:</strong> ${order.dateAdded}</p>
+                    ${order.completed ? '<span>Completed</span>' : `<button class="done-btn" onclick="markAsDone(${order.orderNumber})">Mark as Completed</button>`}
+                `;
+
+                if (order.completed) {
+                    completedList.appendChild(orderElement);
+                } else {
+                    pendingList.appendChild(orderElement);
+                }
+            });
+        }
+
+        // Edit fields for order
+        function editOrderField(orderNumber, field, value) {
+            const order = orders.find(o => o.orderNumber === orderNumber);
+            order[field] = value;
+        }
+
+        function markAsDone(orderNumber) {
+            const order = orders.find(o => o.orderNumber === orderNumber);
+            order.completed = true;
+            order.dateCompleted = new Date().toLocaleDateString();
+            renderOrders();
+        }
+
+        function showTab(tab) {
+            if (tab === 'pending') {
+                document.getElementById('pendingOrders').style.display = 'block';
+                document.getElementById('completedOrders').style.display = 'none';
+                document.getElementById('pendingTab').classList.add('active');
+                document.getElementById('completedTab').classList.remove('active');
+            } else {
+                document.getElementById('pendingOrders').style.display = 'none';
+                document.getElementById('completedOrders').style.display = 'block';
+                document.getElementById('completedTab').classList.add('active');
+                document.getElementById('pendingTab').classList.remove('active');
+            }
+        }
+
+        function searchOrders() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filteredOrders = orders.filter(order =>
+                order.orderNumber.toString().includes(query) || order.orderName.toLowerCase().includes(query)
+            );
+            renderFilteredOrders(filteredOrders);
+        }
+
+        function renderFilteredOrders(filteredOrders) {
+            const pendingList = document.getElementById('pendingOrders');
+            pendingList.innerHTML = '';
+
+            filteredOrders.forEach(order => {
+                const orderElement = document.createElement('div');
+                orderElement.classList.add('order-item');
+                orderElement.innerHTML = `
+                    <h4>Order #${order.orderNumber}</h4>
+                    <p><strong>Order:</strong> ${order.orderName}</p>
+                    <p><strong>Description:</strong> ${order.orderDescription}</p>
+                    <p><strong>Quantity:</strong> ${order.orderQuantity}</p>
+                    <p><strong>Order Type:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'orderType', this.innerText)">${order.orderType}</span></p>
+                    <p><strong>Payment Amount:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'paymentAmount', this.innerText)">${order.paymentAmount}</span></p>
+                    <p><strong>Payment Type:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'paymentType', this.innerText)">${order.paymentType}</span></p>
+                    <p><strong>Delivery Point:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'deliveryPoint', this.innerText)">${order.deliveryPoint}</span></p>
+                    <p><strong>Date Added:</strong> ${order.dateAdded}</p>
+                    ${order.completed ? '<span>Completed</span>' : `<button class="done-btn" onclick="markAsDone(${order.orderNumber})">Mark as Completed</button>`}
+                `;
+                pendingList.appendChild(orderElement);
+            });
+        }
+
+    </script>
+</body>
+</html>

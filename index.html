@@ -200,27 +200,33 @@
             <!-- Order Name Dropdown (can be populated later) -->
             <select id="orderNameSelect">
                 <option value="">Select Order Name</option>
-                <!-- List of selectable order names will be added later -->
+                <option value="Robe Fleur">Robe Fleur</option>
+                <option value="Robe Leopard">Robe Leopard</option>
+                <option value="Churidar">Churidar</option>
+                <option value="Jean">Jean</option>
             </select>
 
             <input type="text" id="orderDescription" placeholder="Describe the order">
             <input type="number" id="orderQuantity" placeholder="Enter quantity" min="1">
 
-            <!-- Admin only: Fields for order details -->
-            <select id="orderTypeSelect" style="display: none;">
-                <option value="">Select Order Type</option>
-                <option value="Standard">Standard</option>
-                <option value="Express">Express</option>
+            <!-- Order Type Selection with predefined options -->
+            <select id="orderTypeSelect" onchange="updatePrice()">
+                <option value="Robe Fleur">Robe Fleur</option>
+                <option value="Robe Leopard">Robe Leopard</option>
+                <option value="Churidar">Churidar</option>
+                <option value="Jean">Jean</option>
             </select>
 
-            <input type="number" id="paymentAmount" placeholder="Payment Amount" style="display: none;">
-            <select id="paymentTypeSelect" style="display: none;">
-                <option value="">Select Payment Type</option>
+            <!-- Price Box (updated based on selected order type) -->
+            <input type="number" id="orderPrice" placeholder="Price" readonly>
+
+            <input type="number" id="paymentAmount" placeholder="Payment Amount" style="display: block;">
+            <select id="paymentTypeSelect" style="display: block;">
                 <option value="Cash">Cash</option>
                 <option value="Juice">Juice</option>
             </select>
 
-            <input type="text" id="deliveryPoint" placeholder="Enter Delivery Point" style="display: none;">
+            <input type="text" id="deliveryPoint" placeholder="Enter Delivery Point" style="display: block;">
 
             <button onclick="addOrder()">Create Order</button>
         </div>
@@ -244,6 +250,14 @@
             "Ashraf": "1509"
         };
 
+        // Predefined order types and prices
+        const orderTypes = {
+            "Robe Fleur": 500,
+            "Robe Leopard": 1000,
+            "Churidar": 1800,
+            "Jean": 500
+        };
+
         // Sign-in function
         function signIn() {
             const usernameInput = document.getElementById('usernameInput').value.trim();
@@ -264,17 +278,25 @@
             }
         }
 
+        // Update price based on selected order type
+        function updatePrice() {
+            const orderType = document.getElementById('orderTypeSelect').value;
+            const price = orderTypes[orderType] || 0;
+            document.getElementById('orderPrice').value = price;
+        }
+
         // Add order function (orders will have the username of the logged-in user)
         function addOrder() {
             const orderName = document.getElementById('orderNameSelect').value;
             const orderDescription = document.getElementById('orderDescription').value.trim();
             const orderQuantity = document.getElementById('orderQuantity').value;
             const orderType = document.getElementById('orderTypeSelect').value;
+            const orderPrice = document.getElementById('orderPrice').value;
             const paymentAmount = document.getElementById('paymentAmount').value;
             const paymentType = document.getElementById('paymentTypeSelect').value;
             const deliveryPoint = document.getElementById('deliveryPoint').value;
 
-            if (!orderName || !orderDescription || !orderQuantity) {
+            if (!orderName || !orderDescription || !orderQuantity || !orderPrice) {
                 alert("Please fill out all fields!");
                 return;
             }
@@ -284,7 +306,8 @@
                 orderName: orderName,
                 orderDescription: orderDescription,
                 orderQuantity: orderQuantity,
-                orderType: orderType || 'Not Specified',
+                orderType: orderType,
+                orderPrice: orderPrice,
                 paymentAmount: paymentAmount || 'Not Provided',
                 paymentType: paymentType || 'Not Selected',
                 deliveryPoint: deliveryPoint || 'Not Provided',
@@ -302,10 +325,10 @@
             document.getElementById('orderNameSelect').value = '';
             document.getElementById('orderDescription').value = '';
             document.getElementById('orderQuantity').value = '';
-
-            document.getElementById('orderTypeSelect').value = '';
+            document.getElementById('orderTypeSelect').value = 'Robe Fleur';
+            document.getElementById('orderPrice').value = '';
             document.getElementById('paymentAmount').value = '';
-            document.getElementById('paymentTypeSelect').value = '';
+            document.getElementById('paymentTypeSelect').value = 'Cash';
             document.getElementById('deliveryPoint').value = '';
         }
 
@@ -324,6 +347,7 @@
                     <p><strong>Description:</strong> ${order.orderDescription}</p>
                     <p><strong>Quantity:</strong> ${order.orderQuantity}</p>
                     <p><strong>Order Type:</strong> ${order.orderType}</p>
+                    <p><strong>Price:</strong> ${order.orderPrice} Rs</p>
                     <p><strong>Payment Amount:</strong> ${order.paymentAmount}</p>
                     <p><strong>Payment Type:</strong> ${order.paymentType}</p>
                     <p><strong>Delivery Point:</strong> ${order.deliveryPoint}</p>
@@ -383,6 +407,7 @@
                     <p><strong>Description:</strong> ${order.orderDescription}</p>
                     <p><strong>Quantity:</strong> ${order.orderQuantity}</p>
                     <p><strong>Order Type:</strong> ${order.orderType}</p>
+                    <p><strong>Price:</strong> ${order.orderPrice} Rs</p>
                     <p><strong>Payment Amount:</strong> ${order.paymentAmount}</p>
                     <p><strong>Payment Type:</strong> ${order.paymentType}</p>
                     <p><strong>Delivery Point:</strong> ${order.deliveryPoint}</p>

@@ -204,7 +204,7 @@
             <input type="text" id="customerName" placeholder="Enter Customer Name">
 
             <!-- Order Name Dropdown -->
-            <select id="orderNameSelect">
+            <select id="orderNameSelect" onchange="updatePrice()">
                 <option value="">Select Order Name</option>
                 <option value="Robe Fleur">Robe Fleur</option>
                 <option value="Robe Leopard">Robe Leopard</option>
@@ -215,15 +215,7 @@
             <input type="text" id="orderDescription" placeholder="Describe the order">
             <input type="number" id="orderQuantity" placeholder="Enter quantity" min="1">
 
-            <!-- Order Type Selection with predefined options -->
-            <select id="orderTypeSelect" onchange="updatePrice()">
-                <option value="Robe Fleur">Robe Fleur</option>
-                <option value="Robe Leopard">Robe Leopard</option>
-                <option value="Churidar">Churidar</option>
-                <option value="Jean">Jean</option>
-            </select>
-
-            <!-- Price Box (updated based on selected order type) -->
+            <!-- Price Box (updated based on selected order name) -->
             <input type="number" id="orderPrice" placeholder="Price" readonly>
 
             <input type="number" id="paymentAmount" placeholder="Payment Amount" style="display: block;">
@@ -284,10 +276,10 @@
             }
         }
 
-        // Update price based on selected order type
+        // Update price based on selected order name
         function updatePrice() {
-            const orderType = document.getElementById('orderTypeSelect').value;
-            const price = orderTypes[orderType] || 0;
+            const orderName = document.getElementById('orderNameSelect').value;
+            const price = orderTypes[orderName] || 0;
             document.getElementById('orderPrice').value = price;
         }
 
@@ -297,7 +289,6 @@
             const orderName = document.getElementById('orderNameSelect').value;
             const orderDescription = document.getElementById('orderDescription').value.trim();
             const orderQuantity = document.getElementById('orderQuantity').value;
-            const orderType = document.getElementById('orderTypeSelect').value;
             const orderPrice = document.getElementById('orderPrice').value;
             const paymentAmount = document.getElementById('paymentAmount').value;
             const paymentType = document.getElementById('paymentTypeSelect').value;
@@ -314,7 +305,6 @@
                 orderName: orderName,
                 orderDescription: orderDescription,
                 orderQuantity: orderQuantity,
-                orderType: orderType,
                 orderPrice: orderPrice,
                 paymentAmount: paymentAmount || 'Not Provided',
                 paymentType: paymentType || 'Not Selected',
@@ -334,7 +324,6 @@
             document.getElementById('orderNameSelect').value = '';
             document.getElementById('orderDescription').value = '';
             document.getElementById('orderQuantity').value = '';
-            document.getElementById('orderTypeSelect').value = 'Robe Fleur';
             document.getElementById('orderPrice').value = '';
             document.getElementById('paymentAmount').value = '';
             document.getElementById('paymentTypeSelect').value = 'Cash';

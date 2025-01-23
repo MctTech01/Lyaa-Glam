@@ -236,12 +236,12 @@
         let currentUser = '';
         let isAdmin = false;
 
-        // Admin credentials
-        const adminCredentials = {
-            "Ashraf": "15",
-            "Sooraj": "77",
-            "Preety": "99",
-            "Akhilesh": "666"
+        // User credentials
+        const userCredentials = {
+            "Alyaa": "2006",
+            "Rukhy": "666",
+            "Ray": "cr7",
+            "Ashraf": "1509"
         };
 
         // Sign-in function
@@ -254,30 +254,17 @@
                 return;
             }
 
-            if (adminCredentials[usernameInput] === passwordInput) {
+            if (userCredentials[usernameInput] === passwordInput) {
                 currentUser = usernameInput;
-                isAdmin = true;
-            } else if (passwordInput === "") {
-                currentUser = usernameInput;
-                isAdmin = false;
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('orderManagerContainer').style.display = 'block';
             } else {
                 alert("Invalid credentials. Please try again.");
                 return;
             }
-
-            document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('orderManagerContainer').style.display = 'block';
-
-            // If admin, show payment details and delivery point input
-            if (isAdmin) {
-                document.getElementById('orderTypeSelect').style.display = 'block';
-                document.getElementById('paymentAmount').style.display = 'block';
-                document.getElementById('paymentTypeSelect').style.display = 'block';
-                document.getElementById('deliveryPoint').style.display = 'block';
-            }
         }
 
-        // Add order function (admins can specify payment details and delivery point)
+        // Add order function (orders will have the username of the logged-in user)
         function addOrder() {
             const orderName = document.getElementById('orderNameSelect').value;
             const orderDescription = document.getElementById('orderDescription').value.trim();
@@ -292,20 +279,16 @@
                 return;
             }
 
-            if (isAdmin && (!orderType || !paymentAmount || !paymentType || !deliveryPoint)) {
-                alert("Please select all required fields!");
-                return;
-            }
-
             const order = {
                 orderNumber: orderCounter++,
                 orderName: orderName,
                 orderDescription: orderDescription,
                 orderQuantity: orderQuantity,
-                orderType: isAdmin ? orderType : 'Not Specified',
-                paymentAmount: isAdmin ? paymentAmount : 'Not Provided',
-                paymentType: isAdmin ? paymentType : 'Not Selected',
-                deliveryPoint: isAdmin ? deliveryPoint : 'Not Provided',
+                orderType: orderType || 'Not Specified',
+                paymentAmount: paymentAmount || 'Not Provided',
+                paymentType: paymentType || 'Not Selected',
+                deliveryPoint: deliveryPoint || 'Not Provided',
+                username: currentUser, // Add the logged-in user
                 dateAdded: new Date().toLocaleDateString(),
                 completed: false,
             };
@@ -320,12 +303,10 @@
             document.getElementById('orderDescription').value = '';
             document.getElementById('orderQuantity').value = '';
 
-            if (isAdmin) {
-                document.getElementById('orderTypeSelect').value = '';
-                document.getElementById('paymentAmount').value = '';
-                document.getElementById('paymentTypeSelect').value = '';
-                document.getElementById('deliveryPoint').value = '';
-            }
+            document.getElementById('orderTypeSelect').value = '';
+            document.getElementById('paymentAmount').value = '';
+            document.getElementById('paymentTypeSelect').value = '';
+            document.getElementById('deliveryPoint').value = '';
         }
 
         function renderOrders() {
@@ -342,10 +323,11 @@
                     <p><strong>Order:</strong> ${order.orderName}</p>
                     <p><strong>Description:</strong> ${order.orderDescription}</p>
                     <p><strong>Quantity:</strong> ${order.orderQuantity}</p>
-                    <p><strong>Order Type:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'orderType', this.innerText)">${order.orderType}</span></p>
-                    <p><strong>Payment Amount:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'paymentAmount', this.innerText)">${order.paymentAmount}</span></p>
-                    <p><strong>Payment Type:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'paymentType', this.innerText)">${order.paymentType}</span></p>
-                    <p><strong>Delivery Point:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'deliveryPoint', this.innerText)">${order.deliveryPoint}</span></p>
+                    <p><strong>Order Type:</strong> ${order.orderType}</p>
+                    <p><strong>Payment Amount:</strong> ${order.paymentAmount}</p>
+                    <p><strong>Payment Type:</strong> ${order.paymentType}</p>
+                    <p><strong>Delivery Point:</strong> ${order.deliveryPoint}</p>
+                    <p><strong>Created by:</strong> ${order.username}</p>
                     <p><strong>Date Added:</strong> ${order.dateAdded}</p>
                     ${order.completed ? '<span>Completed</span>' : `<button class="done-btn" onclick="markAsDone(${order.orderNumber})">Mark as Completed</button>`}
                 `;
@@ -358,12 +340,7 @@
             });
         }
 
-        // Edit fields for order
-        function editOrderField(orderNumber, field, value) {
-            const order = orders.find(o => o.orderNumber === orderNumber);
-            order[field] = value;
-        }
-
+        // Mark order as completed
         function markAsDone(orderNumber) {
             const order = orders.find(o => o.orderNumber === orderNumber);
             order.completed = true;
@@ -405,10 +382,11 @@
                     <p><strong>Order:</strong> ${order.orderName}</p>
                     <p><strong>Description:</strong> ${order.orderDescription}</p>
                     <p><strong>Quantity:</strong> ${order.orderQuantity}</p>
-                    <p><strong>Order Type:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'orderType', this.innerText)">${order.orderType}</span></p>
-                    <p><strong>Payment Amount:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'paymentAmount', this.innerText)">${order.paymentAmount}</span></p>
-                    <p><strong>Payment Type:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'paymentType', this.innerText)">${order.paymentType}</span></p>
-                    <p><strong>Delivery Point:</strong> <span contenteditable="true" onblur="editOrderField(${order.orderNumber}, 'deliveryPoint', this.innerText)">${order.deliveryPoint}</span></p>
+                    <p><strong>Order Type:</strong> ${order.orderType}</p>
+                    <p><strong>Payment Amount:</strong> ${order.paymentAmount}</p>
+                    <p><strong>Payment Type:</strong> ${order.paymentType}</p>
+                    <p><strong>Delivery Point:</strong> ${order.deliveryPoint}</p>
+                    <p><strong>Created by:</strong> ${order.username}</p>
                     <p><strong>Date Added:</strong> ${order.dateAdded}</p>
                     ${order.completed ? '<span>Completed</span>' : `<button class="done-btn" onclick="markAsDone(${order.orderNumber})">Mark as Completed</button>`}
                 `;

@@ -213,9 +213,9 @@
             </select>
 
             <input type="text" id="orderDescription" placeholder="Describe the order">
-            <input type="number" id="orderQuantity" placeholder="Enter quantity" min="1">
+            <input type="number" id="orderQuantity" placeholder="Enter quantity" min="1" onchange="updatePrice()">
 
-            <!-- Price Box (updated based on selected order name) -->
+            <!-- Price Box (updated based on selected order name and quantity) -->
             <input type="number" id="orderPrice" placeholder="Price" readonly>
 
             <input type="number" id="paymentAmount" placeholder="Payment Amount" style="display: block;">
@@ -276,11 +276,13 @@
             }
         }
 
-        // Update price based on selected order name
+        // Update price based on selected order name and quantity
         function updatePrice() {
             const orderName = document.getElementById('orderNameSelect').value;
-            const price = orderTypes[orderName] || 0;
-            document.getElementById('orderPrice').value = price;
+            const quantity = document.getElementById('orderQuantity').value;
+            const pricePerItem = orderTypes[orderName] || 0;
+            const totalPrice = pricePerItem * quantity;
+            document.getElementById('orderPrice').value = totalPrice || 0;
         }
 
         // Add order function (orders will have the username of the logged-in user)
